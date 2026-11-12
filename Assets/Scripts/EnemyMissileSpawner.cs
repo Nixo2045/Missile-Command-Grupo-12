@@ -9,6 +9,11 @@ public class EnemyMissileSpawner : MonoBehaviour
     [SerializeField] private float Ypadding = 0.5f;
 
     private float minX, maxX;
+
+    public int missilesToSpawnThisRound = 10;
+    public float delayBetweenMissiles = .5f;
+
+    float yValue;
     
     
     // Start is called before the first frame update
@@ -18,10 +23,9 @@ public class EnemyMissileSpawner : MonoBehaviour
         maxX = Camera.main.ViewportToWorldPoint(new Vector3(1,1,0)).x;
 
         float randomX = Random.Range(minX, maxX);
-        float yValue = Camera.main.ViewportToWorldPoint(new Vector3(0,1,0)).y;
+        yValue = Camera.main.ViewportToWorldPoint(new Vector3(0,1,0)).y;
 
-        
-        Instantiate(missilePrefab, new Vector3(randomX, yValue + Ypadding, 0), Quaternion.identity);
+        StartCoroutine(SpawnMissiles());
     }
 
     // Update is called once per frame
@@ -29,4 +33,21 @@ public class EnemyMissileSpawner : MonoBehaviour
     {
         
     }
+
+    public IEnumerator SpawnMissiles()
+    {
+        while (missilesToSpawnThisRound > 0)
+        {
+            float randomX = Random.Range(minX, maxX);
+        
+            Instantiate(missilePrefab, new Vector3(randomX, yValue + Ypadding, 0), Quaternion.identity);
+            
+            
+            missilesToSpawnThisRound--;
+
+            yield return new WaitForSeconds(delayBetweenMissiles);
+        }
+    }
+
+
 }
